@@ -49,7 +49,6 @@
 	//Table Views
 	webshop.ui.createProductCatTable = function(/*Boolean*/ _webApp) {
 		var tv = Ti.UI.createTableView();
-		
 		tv.addEventListener('click', function(_e) {
 			var tab = webshop.productsTab;
 			tab.open(webshop.ui.createProductWindow(_e.rowData));
@@ -57,9 +56,12 @@
 		
 		function populateData() {
 			var results = webshop.db.catList();
+			Ti.API.info(results);
 			
-			tv.setData(results);
+			tv.setData(results.title);
 		}
+		
+		//Ti.App.addEventListener('databseUpdated', populateData);
 		
 		populateData();
 		
@@ -81,6 +83,7 @@
 			
 			tv.setData(results);
 		}
+		//Ti.App.addEventListener('databseUpdated', populateData);
 		
 		populateData();
 		
