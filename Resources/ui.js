@@ -1,5 +1,6 @@
 (function() {
 	webshop.ui = {};
+	webshop.ui.L = Titanium.Locale.getString;
 	
 	//Main window
 	webshop.ui.createAboutWindow = function() {
@@ -19,6 +20,13 @@
 			});
 			win.setRightNavButton(b);
 		}
+		
+		var webview = Ti.UI.createWebView({
+			url:'about.html',
+			height:'auto',
+			width:'auto'
+		})
+		win.add(webview);
 		
 		return win;
 	};
@@ -49,6 +57,7 @@
 	//Table Views
 	webshop.ui.createProductCatTable = function(/*Boolean*/ _webApp) {
 		var tv = Ti.UI.createTableView();
+		
 		tv.addEventListener('click', function(_e) {
 			var tab = webshop.productsTab;
 			tab.open(webshop.ui.createProductWindow(_e.rowData));
@@ -56,12 +65,12 @@
 		
 		function populateData() {
 			var results = webshop.db.catList();
-			Ti.API.info(results);
+			Ti.API.info('catlist');
 			
-			tv.setData(results.title);
+			tv.setData(results);
 		}
 		
-		//Ti.App.addEventListener('databseUpdated', populateData);
+		Ti.App.addEventListener('databaseUpdated', populateData);
 		
 		populateData();
 		
@@ -83,7 +92,7 @@
 			
 			tv.setData(results);
 		}
-		//Ti.App.addEventListener('databseUpdated', populateData);
+		Ti.App.addEventListener('databaseUpdated', populateData);
 		
 		populateData();
 		
@@ -127,28 +136,29 @@
 	webshop.ui.createApplicationTabGroup = function() {
 		var tabGroup = Titanium.UI.createTabGroup();
 		
-		var home = webshop.ui.createShopWindow(L('tab_home'));
-		var store = webshop.ui.createShopWindow(L('tab_store'));
-		var products = webshop.ui.createShopWindow(L('tab_products'));
-		var cart = webshop.ui.createShopWindow(L('tab_cart'));
+		var home = webshop.ui.createShopWindow(Ti.Locale.getString('tab_home'));
+		var store = webshop.ui.createShopWindow(Ti.Locale.getString('tab_store'));
+		var products = webshop.ui.createShopWindow(Ti.Locale.getString('tab_products'));
+		var cart = webshop.ui.createShopWindow(Ti.Locale.getString('tab_cart'));
 		
 		webshop.homeTab = Titanium.UI.createTab({
-		  title: 'Home',
+		  title: Ti.Locale.getString('tab_home'),
+		  icon: 'icons/home@2x.png',
 		  window: home
 		});
 		
 		webshop.storeTab = Titanium.UI.createTab({
-		  title: L('tab_store'),
+		  title: Ti.Locale.getString('tab_store'),
 		  window: store
 		});
 		
 		webshop.productsTab = Titanium.UI.createTab({
-		  title: L('tab_products'),
+		  title: Ti.Locale.getString('tab_products'),
 		  window: products
 		});
 		
 		webshop.cartTab = Titanium.UI.createTab({
-		  title: L('tab_cart'),
+		  title: Ti.Locale.getString('tab_cart'),
 		  window: cart
 		});
 		
