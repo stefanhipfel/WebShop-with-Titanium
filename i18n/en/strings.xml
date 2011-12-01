@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+	<string name="win_about">About</string>
+	<string name="tab_home">Welcome</string>
+	<string name="tab_store">Store</string>
+	<string name="tab_products">Products</string>
+	<string name="tab_cart">Shopping Cart</string>
+	<string name="busted">Busted!</string>
+	<string name="still_at_large">Still At Large</string>
+	<string name="new_fugitive">New Fugitive</string>
+</resources>
