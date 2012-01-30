@@ -1,12 +1,12 @@
 (function(){
 	webshop.net = {};
 	
-	webshop.net.getProductCat = function (_cat) {
+	webshop.net.getShopData = function (_cat) {
 		var xhr = Titanium.Network.createHTTPClient();
 		xhr.onload = function() {
 			_cat(JSON.parse(this.responseText));
 		};
-		xhr.open("GET", "http://10.37.129.3:5984/webshop/_design/productCat/_view/CategorieList");
+		xhr.open("GET", "http://127.0.0.1:8000/intershop/cache/getCompleteList");
 		xhr.send();
 	};
 	
