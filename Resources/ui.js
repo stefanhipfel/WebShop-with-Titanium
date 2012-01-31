@@ -32,6 +32,17 @@
 	};
 	
 	//Sub window
+	webshop.ui.createSubCatWindow = function(/*Object*/ _product) {
+		var win = Ti.UI.createWindow({
+			title:_product.title,
+			
+		});
+		win.add(webshop.ui.createSubCatTable(_product.id));
+			
+		return win;
+	};
+	
+	//Sub window
 	webshop.ui.createProductWindow = function(/*Object*/ _product) {
 		var win = Ti.UI.createWindow({
 			title:_product.title,
@@ -41,30 +52,112 @@
 			
 		return win;
 	};
-	
-		//Sub window
-	webshop.ui.createProductCatWindow = function(/*Object*/ _product) {
+	//Sub window
+	webshop.ui.createProductDetailWindow = function(/*Object*/ _product) {
 		var win = Ti.UI.createWindow({
-			title:_product.title,
-			
+			title: _product.title
 		});
+		var view1 = Ti.UI.createView({
+			backgroundColor:'red'
+		});
+		var l1 = Ti.UI.createLabel({
+			text:'View 1',
+			color:'#fff',
+			width:'auto',
+			height:'auto'
+		});
+		view1.add(l1);
 		
-		win.add(webshop.ui.createProductCatTable(_product.id));
+		var view2 = Ti.UI.createView({
+			backgroundColor:'blue'
+		});
+		var l2 = Ti.UI.createLabel({
+			text:'Click Me (View 2 - see log)',
+			color:'#fff',
+			width:'auto',
+			height:'auto'
+		});
+		view2.add(l2);
+		
+		var view3 = Ti.UI.createView({
+			backgroundColor:'green'
+		});
+		var l3 = Ti.UI.createLabel({
+			text:'View 3',
+			color:'#fff',
+			width:'auto',
+			height:'auto'
+		});
+		view3.add(l3);
+		
+		var view4 = Ti.UI.createView({
+			backgroundImage:'http://127.0.0.1/webshop/webshop/images/default.jpg'
+		});
+
+		var scrollView = Titanium.UI.createScrollableView({
+			views:[view1,view2,view3,view4],
+			showPagingControl:true,
+			pagingControlHeight:10,
+			pagingControlColor:'black',
+			maxZoomScale:2.0,
+			currentPage:1,
+			top: 0,
+			height: 200
+		});
+
+		win.add(scrollView);
+
+		// BODY
+		var body = Ti.UI.createScrollView({	
+				   	contentWidth:'auto',
+					contentHeight:'auto',
+					top:200,
+					showVerticalScrollIndicator:true,
+					showHorizontalScrollIndicator:true
+		});
+		var bodyText = Ti.UI.createLabel({
+			text: 'blalldkflskflskdfldkflsdkfldksf,',
+			height: 300,
+			width: 'auto',
+			shadowColor: '#aaa',
+			shadowOffset: {x:1, y:1},
+			color: '#900',
+			fond: {fonSize: 48},
+			textAlign: 'left'
+		})
+		body.add(bodyText);
+		win.add(body);
+		
+		var tb2 = Titanium.UI.iOS.createTabbedBar({
+			labels:['Info', 'Passend', 'Bewertungen', 'Covers'],
+			backgroundColor:'blue',
+			index:2
+		});
+		var flexSpace = Titanium.UI.createButton({
+			systemButton:Titanium.UI.iPhone.SystemButton.FLEXIBLE_SPACE
+		});
+
+		win.setToolbar([flexSpace,tb2,flexSpace]);
+		
+		tb2.addEventListener('click', function(e)
+		{
+			l.text = 'You clicked index = ' + e.index;
+		});
 			
 		return win;
 	};
 	
 	//Table Views
-	webshop.ui.createProductCatTable = function(/*Boolean*/ _webApp) {
+	webshop.ui.createMainCatTable = function(/*Boolean*/ _webApp) {
 		var tv = Ti.UI.createTableView();
 		
 		tv.addEventListener('click', function(_e) {
 			var tab = webshop.productsTab;
-			tab.open(webshop.ui.createProductWindow(_e.rowData));
+			tab.open(webshop.ui.createSubCatWindow(_e.rowData));
 		});
 		
 		function populateData() {
-			var results = webshop.db.catList();
+			var results = webshop.db.mainCatList();
 			Ti.API.info('catlist');
 			
 			tv.setData(results);
@@ -78,14 +171,48 @@
 	};
 	
 		//Table Views
-	webshop.ui.createProductTable = function(_cat) {
-		var tv = Ti.UI.createTableView();
+	webshop.ui.createSubCatTable = function(_cat) {
+		var search = Titanium.UI.createSearchBar({
+			showCancel:false
+		});
+		var tv = Ti.UI.createTableView({
+			search: search
+		});
 		
-		/*tv.addEventListener('click', function(_e) {
+		tv.addEventListener('click', function(_e) {
 			var tab = webshop.productsTab;
 			tab.open(webshop.ui.createProductWindow(_e.rowData));
 		});
-		*/
+		
+		
+		function populateData() {
+			var results = webshop.db.subCatList(_cat);
+			
+			tv.setData(results);
+		}
+		Ti.App.addEventListener('databaseUpdated', populateData);
+		
+		populateData();
+		
+		return tv;
+	};
+	
+		//Table Views
+	
+	webshop.ui.createProductTable = function(_cat) {
+		var search = Titanium.UI.createSearchBar({
+			showCancel:false
+		});
+		Ti.API.info(search)
+		var tv = Ti.UI.createTableView({
+			search: search
+		});
+		
+		tv.addEventListener('click', function(_e) {
+			var tab = webshop.productsTab;
+			tab.open(webshop.ui.createProductDetailWindow(_e.rowData));
+		});
+		
 		
 		function populateData() {
 			var results = webshop.db.productList(_cat);
@@ -115,7 +242,7 @@
 			}
 		});
 		if(_tabName === L('tab_products')){
-		win.add(webshop.ui.createProductCatTable(_tabName));
+		win.add(webshop.ui.createMainCatTable(_tabName));
 		};
 		
 		if (Ti.Platform.osname === 'iphone') {

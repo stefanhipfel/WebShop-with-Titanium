@@ -1,6 +1,7 @@
 Titanium.UI.setBackgroundColor('#ffffff');
 
 var webshop = {}; //`bh` is our app's namespace
+Ti.App.Properties.setString('client', 'elegance');
 Ti.include( //we'll be including all the files for our namespace in the root app context
 	'ui.js',
 	'network.js',
