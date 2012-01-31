@@ -46,7 +46,7 @@
 	webshop.ui.createProductWindow = function(/*Object*/ _product) {
 		var win = Ti.UI.createWindow({
 			title:_product.title,
-			
+			backgroundImage: 'chip.jpg'
 		});
 		win.add(webshop.ui.createProductTable(_product.id));
 			
@@ -205,7 +205,11 @@
 		});
 		Ti.API.info(search)
 		var tv = Ti.UI.createTableView({
-			search: search
+			search: search,
+			filterAttribute: 'filter',
+			style:Titanium.UI.iPhone.TableViewStyle.GROUPED,
+			backgroundColor:'transparent',
+			separatorColor:'#390A0E'
 		});
 		
 		tv.addEventListener('click', function(_e) {

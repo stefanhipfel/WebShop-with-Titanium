@@ -67,8 +67,10 @@
 		while (result.isValidRow()) {
 				var row = Ti.UI.createTableViewRow({
 					height:100,
-					name: result.fieldByName('text'),
+					filter: result.fieldByName('name'),
 					id: result.fieldByName('sub_id'),
+					backgroundColor: 'blue',
+					selectedBackgroundColor: '#670000',
 					hasChild: true});
 	
 				var label = Ti.UI.createLabel({
@@ -86,7 +88,7 @@
 				
 			
 				var i = Ti.UI.createImageView({
-					image: "icons/* default.jpg",
+					image: "icons/default.jpg",
 					top: 10,
 					left: 0,
 					width:125,
