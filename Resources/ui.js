@@ -28,14 +28,14 @@
 		})
 		win.add(webview);
 		
-		return win;
+		return win; 
 	};
 	
 	//Sub window
 	webshop.ui.createSubCatWindow = function(/*Object*/ _product) {
 		var win = Ti.UI.createWindow({
-			title:_product.title,
-			
+			title:_product.name,
+			backgroundImage: 'chip.jpg'
 		});
 		win.add(webshop.ui.createSubCatTable(_product.id));
 			
@@ -45,7 +45,7 @@
 	//Sub window
 	webshop.ui.createProductWindow = function(/*Object*/ _product) {
 		var win = Ti.UI.createWindow({
-			title:_product.title,
+			title:_product.name,
 			backgroundImage: 'chip.jpg'
 		});
 		win.add(webshop.ui.createProductTable(_product.id));
@@ -55,47 +55,13 @@
 	//Sub window
 	webshop.ui.createProductDetailWindow = function(/*Object*/ _product) {
 		var win = Ti.UI.createWindow({
-			title: _product.title
+			title: _product.name
 		});
-		var view1 = Ti.UI.createView({
-			backgroundColor:'red'
-		});
-		var l1 = Ti.UI.createLabel({
-			text:'View 1',
-			color:'#fff',
-			width:'auto',
-			height:'auto'
-		});
-		view1.add(l1);
-		
-		var view2 = Ti.UI.createView({
-			backgroundColor:'blue'
-		});
-		var l2 = Ti.UI.createLabel({
-			text:'Click Me (View 2 - see log)',
-			color:'#fff',
-			width:'auto',
-			height:'auto'
-		});
-		view2.add(l2);
-		
-		var view3 = Ti.UI.createView({
-			backgroundColor:'green'
-		});
-		var l3 = Ti.UI.createLabel({
-			text:'View 3',
-			color:'#fff',
-			width:'auto',
-			height:'auto'
-		});
-		view3.add(l3);
-		
-		var view4 = Ti.UI.createView({
-			backgroundImage:'http://127.0.0.1/webshop/webshop/images/default.jpg'
-		});
-
+		var coverWinOpen = false;
+		win.orientationModes = [Ti.UI.PORTRAIT, Ti.UI.LANDSCAPE_LEFT, Ti.UI.LANDSCAPE_RIGHT];
+		var tab = webshop.productsTab;
 		var scrollView = Titanium.UI.createScrollableView({
-			views:[view1,view2,view3,view4],
+			views: webshop.db.productDetails(_product.id),
 			showPagingControl:true,
 			pagingControlHeight:10,
 			pagingControlColor:'black',
@@ -130,7 +96,7 @@
 		
 		var tb2 = Titanium.UI.iOS.createTabbedBar({
 			labels:['Info', 'Passend', 'Bewertungen', 'Covers'],
-			backgroundColor:'blue',
+			backgroundColor:'red',
 			index:2
 		});
 		var flexSpace = Titanium.UI.createButton({
@@ -139,9 +105,34 @@
 
 		win.setToolbar([flexSpace,tb2,flexSpace]);
 		
+		var coverWin = Titanium.UI.createWindow({
+			url:'coverflow_view.js',
+			title:_product.name,
+			images: webshop.db.productImages(_product.id),
+			id: _product.id
+		});
+		coverWin.addEventListener('open', function(e) {
+				coverWinOpen = true;
+		});
+		coverWin.addEventListener('close', function(e) {
+				coverWinOpen = false;
+		});
+		
 		tb2.addEventListener('click', function(e)
-		{
-			l.text = 'You clicked index = ' + e.index;
+		{	if(e.index === 3) {
+				tab.open(coverWin,{animated:true});
+			}
+		});
+		
+		Ti.Gesture.addEventListener('orientationchange',function(e) {
+			if(e.orientation === Ti.UI.LANDSCAPE_RIGHT || e.orientation === Ti.UI.LANDSCAPE_LEFT) {
+				if(!coverWinOpen) {
+					tab.open(coverWin,{animated:true});
+				} 				
+			}
+			if(e.orientation === Ti.UI.PORTRAIT) {
+				tab.close(coverWin,{animated:true});
+			}
 		});
 			
 		return win;
@@ -149,7 +140,12 @@
 	
 	//Table Views
 	webshop.ui.createMainCatTable = function(/*Boolean*/ _webApp) {
-		var tv = Ti.UI.createTableView();
+		var tv = Ti.UI.createTableView({
+			style:Titanium.UI.iPhone.TableViewStyle.GROUPED,
+			backgroundColor:'transparent',
+			separatorColor:'#390A0E',
+			top: 30
+		});
 		
 		tv.addEventListener('click', function(_e) {
 			var tab = webshop.productsTab;
@@ -158,8 +154,7 @@
 		
 		function populateData() {
 			var results = webshop.db.mainCatList();
-			Ti.API.info('catlist');
-			
+
 			tv.setData(results);
 		}
 		
@@ -176,7 +171,10 @@
 			showCancel:false
 		});
 		var tv = Ti.UI.createTableView({
-			search: search
+			search: search,
+			style:Titanium.UI.iPhone.TableViewStyle.GROUPED,
+			backgroundColor:'transparent',
+			separatorColor:'#390A0E'
 		});
 		
 		tv.addEventListener('click', function(_e) {
@@ -203,13 +201,12 @@
 		var search = Titanium.UI.createSearchBar({
 			showCancel:false
 		});
-		Ti.API.info(search)
 		var tv = Ti.UI.createTableView({
 			search: search,
 			filterAttribute: 'filter',
-			style:Titanium.UI.iPhone.TableViewStyle.GROUPED,
+			style:Titanium.UI.iPhone.TableViewStyle.PLAIN,
 			backgroundColor:'transparent',
-			separatorColor:'#390A0E'
+			separatorStyle: Ti.UI.iPhone.TableViewSeparatorStyle.NONE
 		});
 		
 		tv.addEventListener('click', function(_e) {
@@ -232,6 +229,7 @@
 	
 	webshop.ui.createShopWindow = function(/*Boolean*/ _tabName) {
 		var win = Titanium.UI.createWindow({
+			backgroundImage: 'chip.jpg',
 		  title: (_tabName),
 			activity : {
 				onCreateOptionsMenu : function(e) {
@@ -280,16 +278,19 @@
 		
 		webshop.storeTab = Titanium.UI.createTab({
 		  title: Ti.Locale.getString('tab_store'),
+		  icon:'icons/store@2x.png',
 		  window: store
 		});
 		
 		webshop.productsTab = Titanium.UI.createTab({
 		  title: Ti.Locale.getString('tab_products'),
+		  icon:'icons/produkte@2x.png',
 		  window: products
 		});
 		
 		webshop.cartTab = Titanium.UI.createTab({
 		  title: Ti.Locale.getString('tab_cart'),
+		  icon:'icons/warenkorb@2x.png',
 		  window: cart
 		});
 		

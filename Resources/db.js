@@ -7,7 +7,7 @@
 	db.execute('CREATE TABLE IF NOT EXISTS mainCategories(id TEXT PRIMARY KEY, name TEXT)');
 	db.execute('CREATE TABLE IF NOT EXISTS subCategories(id TEXT PRIMARY KEY, main_id TEXT, name TEXT)');
 	db.execute('CREATE TABLE IF NOT EXISTS products(id TEXT PRIMARY KEY, sub_id TEXT, name TEXT, text TEXT, price TEXT, image TEXT)');
-	
+	db.execute('CREATE TABLE IF NOT EXISTS images(id TEXT PRIMARY KEY, prod_id TEXT, url TEXT)');
 	db.close();
 	
 	var checkForData = function(_client) {
@@ -26,13 +26,42 @@
 		var list = [];
 		var db = Ti.Database.open('WebShop');
 		var result = db.execute('SELECT * FROM mainCategories');
+		var nbrRows = result.rowCount;
+		var count = 1;
 		while (result.isValidRow()) {
-			Ti.API.info(result.fieldByName('name'));
-			list.push({
-				title: result.fieldByName('name'),
-				id: result.fieldByName('id'),
-				hashChild: true
-			});
+				var row = Ti.UI.createTableViewRow({
+					height:70,
+					filter: result.fieldByName('name'),
+					name: result.fieldByName('name'),
+					id: result.fieldByName('id'),
+					selectedBackgroundColor: '#670000',
+					hasChild: true});
+	
+				var label = Ti.UI.createLabel({
+					text: result.fieldByName('name'),
+					color: '#420404',
+					shadowColor:'#900',
+					shadowOffset:{x:0,y:1},
+					textAlign:'left',
+					left:10,
+					font:{fontWeight:'bold',fontSize:18},
+					width:'auto',
+					height:'auto'
+				});
+				row.add(label);
+				if(count === 1) {
+					row.backgroundImage = 'topRow.png';	
+					count++;
+				} else if(count < nbrRows) {
+					row.backgroundImage = 'middleRow.png';
+					count++;
+				} else if(count === nbrRows) {
+					row.backgroundImage = 'bottomRow.png';
+					count++;
+				}
+
+			list.push(row);
+
 			result.next();
 		}
 		result.close();
@@ -45,13 +74,43 @@
 		var list = [];
 		var db = Ti.Database.open('WebShop');
 		var result = db.execute('SELECT * FROM subCategories WHERE main_id = ?', [_id]);
+		var nbrRows = result.rowCount;
+		var count = 1;
 		while (result.isValidRow()) {
-			list.push({
-				title: result.fieldByName('name'),
-				name: result.fieldByName('name'),
-				id: result.fieldByName('id'),
-				hashChild: true
-			});
+				var row = Ti.UI.createTableViewRow({
+					height:60,
+					filter: result.fieldByName('name'),
+					name: result.fieldByName('name'),
+					id: result.fieldByName('id'),
+					selectedBackgroundColor: '#670000',
+					hasChild: true});
+	
+				var label = Ti.UI.createLabel({
+					text: result.fieldByName('name'),
+					color: '#420404',
+					shadowColor:'#900',
+					shadowOffset:{x:0,y:1},
+					textAlign:'left',
+					left:20,
+					font:{fontWeight:'bold',fontSize:18},
+					width:'auto',
+					height:'auto'
+				});
+				row.add(label);
+					if(count === 1) {
+					row.backgroundImage = 'topRow.png';	
+					count++;
+				} else if(count < nbrRows) {
+					row.backgroundImage = 'middleRow.png';
+					count++;
+				} else if(count === nbrRows) {
+					row.backgroundImage = 'bottomRow.png';
+					count++;
+				}
+				//row.leftImage = result.fieldByName('image');
+				//row.rightImage = 'indicator.png';
+
+			list.push(row);
 			result.next();
 		}
 		result.close();
@@ -64,41 +123,70 @@
 		var list = [];
 		var db = Ti.Database.open('WebShop');
 		var result = db.execute('SELECT * FROM products WHERE sub_id = ?', [_id]);
+		var nbrRows = result.rowCount;
+		var count = 1;
 		while (result.isValidRow()) {
 				var row = Ti.UI.createTableViewRow({
 					height:100,
 					filter: result.fieldByName('name'),
-					id: result.fieldByName('sub_id'),
-					backgroundColor: 'blue',
+					name: result.fieldByName('name'),
+					id: result.fieldByName('id'),
 					selectedBackgroundColor: '#670000',
-					hasChild: true});
+					hasChild: true
+				});
 	
 				var label = Ti.UI.createLabel({
 					text: result.fieldByName('name'),
-					color: '#111',
+					color: '#420404',
 					shadowColor:'#900',
 					shadowOffset:{x:0,y:1},
 					textAlign:'left',
-					left:130,
-					font:{fontWeight:'bold',fontSize:18},
+					top: 25,
+					left:100,
+					font:{fontWeight:'bold',fontSize:16},
 					width:'auto',
 					height:'auto'
 				});
-				row.add(label);
 				
+				var label2 = Ti.UI.createLabel({
+					text: 'more information here!!!',
+					color: '#420404',
+					textAlign: 'left',
+					top: 70,
+					left: 100,
+					font:{fontWeight: 'bold', fontSize: 12},
+					width: 'auto',
+					height: 'auto'
+				})
+				row.add(label);
+				row.add(label2);
 			
 				var i = Ti.UI.createImageView({
-					image: "icons/default.jpg",
-					top: 10,
-					left: 0,
-					width:125,
-					height:89
+					top: 5,
+					bottom: 5,
+					left:5,
+					width:'90',
+					height:'90',
+					borderRadius:10.0,
+					borderColor: '#420404',
+					borderWidth: 2,
+					canScale:false,
+					backgroundImage: result.fieldByName('image')
 				});
-			
 				row.add(i);
+				if(count === 1) {
+					row.backgroundImage = 'topRow.png';	
+					count++;
+				} else if(count < nbrRows) {
+					row.backgroundImage = 'middleRow.png';
+					count++;
+				} else if(count === nbrRows) {
+					row.backgroundImage = 'bottomRow.png';
+					count++;
+				}
+				//row.leftImage = result.fieldByName('image');
+				row.rightImage = 'indicator.png';
 				
-				//data[c] = row;
-
 			list.push(row);
 			
 			result.next();
@@ -107,6 +195,32 @@
 		db.close();
 		
 		return list;
+	};
+	
+	
+	webshop.db.productDetails = function(_id){
+		var list = [];
+		var db = Ti.Database.open('WebShop');
+		var result = db.execute('SELECT * FROM products WHERE id = ?', [_id]);
+		while (result.isValidRow()) {
+			var view = Ti.UI.createImageView({
+				image: result.fieldByName('image')
+			});
+			list.push(view);
+			result.next();
+		}
+		return list
+	};
+	
+	webshop.db.productImages = function(_id){
+		var list = [];
+		var db = Ti.Database.open('WebShop');
+		var result = db.execute('SELECT * FROM products WHERE id = ?', [_id]);
+		while (result.isValidRow()) {
+			list.push(result.fieldByName('image'));
+			result.next();
+		}
+		return list
 	};
 	
 	webshop.db.addMainCats = function(_id, _name){
@@ -134,8 +248,13 @@
 							
 							webshop.db.addSubCats(data.items[main].items[subs]._id, data.items[main]._id, data.items[main].items[subs].name);
 							for(var prods = 0; prods < data.items[main].items[subs].items.length; prods++) {
-
-									webshop.db.addProducts(data.items[main].items[subs].items[prods]._id, data.items[main].items[subs]._id, data.items[main].items[subs].items[prods].name, data.items[main].items[subs].items[prods].text, data.items[main].items[subs].items[prods].price, data.items[main].items[subs].items[prods].images[0].replace('{relTypeCode}', 550));	
+									var image = data.items[main].items[subs].items[prods].images[0];
+									var imgPath = webshop.net.getImage(data.items[main].items[subs].items[prods]._id, image, 550);
+									/*for (var items = 0; items < images.length; items++) {
+										webshop.net.getImage(data.items[main].items[subs].items[prods]._id, images[items], 550);
+									}
+									*/
+									webshop.db.addProducts(data.items[main].items[subs].items[prods]._id, data.items[main].items[subs]._id, data.items[main].items[subs].items[prods].name, data.items[main].items[subs].items[prods].text, data.items[main].items[subs].items[prods].price, imgPath);	
 							}	
 					}
 			}
