@@ -57,11 +57,12 @@
 		var win = Ti.UI.createWindow({
 			title: _product.name
 		});
+		var data = webshop.db.productDetails(_product.id);
 		var coverWinOpen = false;
 		win.orientationModes = [Ti.UI.PORTRAIT, Ti.UI.LANDSCAPE_LEFT, Ti.UI.LANDSCAPE_RIGHT];
 		var tab = webshop.productsTab;
 		var scrollView = Titanium.UI.createScrollableView({
-			views: webshop.db.productDetails(_product.id),
+			views: data.images,
 			showPagingControl:true,
 			cacheSize:3,
 			pagingControlHeight:10,
@@ -80,17 +81,16 @@
 					contentHeight:'auto',
 					top:200,
 					backgroundcolor: 'grey',
-					showVerticalScrollIndicator:true,
-					showHorizontalScrollIndicator:true
+					showVerticalScrollIndicator:true
 		});
 		var bodyText = Ti.UI.createLabel({
-			text: 'blalldkflskflskdfldkflsdkfldksf,',
+			text: data.text,
 			height: 'auto',
-			width: 'auto',
-			shadowColor: '#aaa',
-			shadowOffset: {x:1, y:1},
+			width: '95%',
+			left:5,
+			right:5,
 			color: '#900',
-			fond: {fonSize: 48},
+			fond: {fonSize: 12},
 			textAlign: 'left'
 		})
 		body.add(bodyText);
@@ -99,7 +99,7 @@
 		var tb2 = Titanium.UI.iOS.createTabbedBar({
 			labels:['Info', 'Passend', 'Bewertungen', 'Covers'],
 			backgroundColor:'#420404',
-			index:2
+			index:0
 		});
 		var flexSpace = Titanium.UI.createButton({
 			systemButton:Titanium.UI.iPhone.SystemButton.FLEXIBLE_SPACE
@@ -115,11 +115,11 @@
 		});
 		coverWin.addEventListener('open', function(e) {
 				coverWinOpen = true;
-				Ti.API.info(coverWinOpen)
+				//tb2.setIndex = 0;
 		});
 		coverWin.addEventListener('close', function(e) {
 				coverWinOpen = false;
-				Ti.API.info(coverWinOpen)
+				
 		});
 		
 		tb2.addEventListener('click', function(e)
@@ -247,8 +247,29 @@
 				}
 			}
 		});
+		
 		if(_tabName === L('tab_products')){
 		win.add(webshop.ui.createMainCatTable(_tabName));
+		};
+		if(_tabName === L('tab_home')){
+			var scrollView = Titanium.UI.createScrollableView({
+				views:  [Ti.UI.createImageView({
+					image: 'images/tableView/bottomRow.png'
+				}), Ti.UI.createImageView({
+					backgroundImage: 'images/tableView/bottomRow.png',
+				height:'100%',
+				canScale:true
+				})],
+				showPagingControl:true,
+				pagingControlHeight:10,
+				pagingControlColor:'#420404',
+				maxZoomScale:2.0,
+				currentPage:1,
+				top: 0,
+				height: 200
+			});
+	
+			win.add(scrollView);
 		};
 		
 		if (Ti.Platform.osname === 'iphone') {

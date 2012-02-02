@@ -49,15 +49,15 @@
 				});
 				row.add(label);
 				if(count === 1) {
-					row.backgroundImage = 'topRow.png';	
+					row.backgroundImage = 'images/tableView/topRow.png';	
 					row.selectedBackgroundImage = 'images/tableView/topRowSelected.png';
 					count++;
 				} else if(count < nbrRows) {
-					row.backgroundImage = 'middleRow.png';
+					row.backgroundImage = 'images/tableView/middleRow.png';
 					row.selectedBackgroundImage = 'images/tableView/middleRowSelected.png';
 					count++;
 				} else if(count === nbrRows) {
-					row.backgroundImage = 'bottomRow.png';
+					row.backgroundImage = 'images/tableView/bottomRow.png';
 					row.selectedBackgroundImage = 'images/tableView/bottomRowSelected.png';
 					count++;
 				}
@@ -100,15 +100,15 @@
 				});
 				row.add(label);
 					if(count === 1) {
-					row.backgroundImage = 'topRow.png';	
+					row.backgroundImage = 'images/tableView/topRow.png';	
 					row.selectedBackgroundImage = 'images/tableView/topRowSelected.png';
 					count++;
 				} else if(count < nbrRows) {
-					row.backgroundImage = 'middleRow.png';
+					row.backgroundImage = 'images/tableView/middleRow.png';
 					row.selectedBackgroundImage = 'images/tableView/middleRowSelected.png';
 					count++;
 				} else if(count === nbrRows) {
-					row.backgroundImage = 'bottomRow.png';
+					row.backgroundImage = 'images/tableView/bottomRow.png';
 					row.selectedBackgroundImage = 'images/tableView/bottomRowSelected.png';
 					count++;
 				}
@@ -154,14 +154,14 @@
 				});
 				
 				var label2 = Ti.UI.createLabel({
-					text: 'more information here!!!',
+					text: result.fieldByName('price'),
 					color: '#E6E6E6',
 					shadowColor:'black',
 					shadowOffset:{x:0,y:1},
 					textAlign: 'left',
-					top: 60,
-					left: 100,
-					font:{fontWeight: 'bold', fontSize: 12},
+					top: 70,
+					right: 40,
+					font:{fontWeight: 'bold', fontSize: 14},
 					width: 'auto',
 					height: 'auto'
 				})
@@ -206,7 +206,8 @@
 	
 	
 	webshop.db.productDetails = function(_id){
-		var list = [];
+		var product = {};
+			product.images = [];
 		var db = Ti.Database.open('WebShop');
 		var result = db.execute('SELECT * FROM products WHERE id = ?', [_id]);
 		while (result.isValidRow()) {
@@ -214,10 +215,11 @@
 				image: result.fieldByName('image'),
 				backgroundImage: 'chip.jpg'
 			});
-			list.push(view);
+			product.text = result.fieldByName('text');
+			product.images.push(view);
 			result.next();
 		}
-		return list
+		return product;
 	};
 	
 	webshop.db.productImages = function(_id){
