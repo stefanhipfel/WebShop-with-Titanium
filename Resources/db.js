@@ -34,7 +34,6 @@
 					filter: result.fieldByName('name'),
 					name: result.fieldByName('name'),
 					id: result.fieldByName('id'),
-					selectedBackgroundColor: '#670000',
 					hasChild: true});
 	
 				var label = Ti.UI.createLabel({
@@ -51,12 +50,15 @@
 				row.add(label);
 				if(count === 1) {
 					row.backgroundImage = 'topRow.png';	
+					row.selectedBackgroundImage = 'images/tableView/topRowSelected.png';
 					count++;
 				} else if(count < nbrRows) {
 					row.backgroundImage = 'middleRow.png';
+					row.selectedBackgroundImage = 'images/tableView/middleRowSelected.png';
 					count++;
 				} else if(count === nbrRows) {
 					row.backgroundImage = 'bottomRow.png';
+					row.selectedBackgroundImage = 'images/tableView/bottomRowSelected.png';
 					count++;
 				}
 
@@ -99,12 +101,15 @@
 				row.add(label);
 					if(count === 1) {
 					row.backgroundImage = 'topRow.png';	
+					row.selectedBackgroundImage = 'images/tableView/topRowSelected.png';
 					count++;
 				} else if(count < nbrRows) {
 					row.backgroundImage = 'middleRow.png';
+					row.selectedBackgroundImage = 'images/tableView/middleRowSelected.png';
 					count++;
 				} else if(count === nbrRows) {
 					row.backgroundImage = 'bottomRow.png';
+					row.selectedBackgroundImage = 'images/tableView/bottomRowSelected.png';
 					count++;
 				}
 				//row.leftImage = result.fieldByName('image');
@@ -131,28 +136,30 @@
 					filter: result.fieldByName('name'),
 					name: result.fieldByName('name'),
 					id: result.fieldByName('id'),
-					selectedBackgroundColor: '#670000',
-					hasChild: true
+					//backgroundColor: '#670000',
+					selectedBackgroundColor: '#670000'
 				});
 	
 				var label = Ti.UI.createLabel({
 					text: result.fieldByName('name'),
-					color: '#420404',
-					shadowColor:'#900',
+					color: '#E6E6E6',
+					shadowColor:'black',
 					shadowOffset:{x:0,y:1},
 					textAlign:'left',
 					top: 25,
 					left:100,
-					font:{fontWeight:'bold',fontSize:16},
+					font:{fontWeight:'light',fontSize:17},
 					width:'auto',
 					height:'auto'
 				});
 				
 				var label2 = Ti.UI.createLabel({
 					text: 'more information here!!!',
-					color: '#420404',
+					color: '#E6E6E6',
+					shadowColor:'black',
+					shadowOffset:{x:0,y:1},
 					textAlign: 'left',
-					top: 70,
+					top: 60,
 					left: 100,
 					font:{fontWeight: 'bold', fontSize: 12},
 					width: 'auto',
@@ -161,31 +168,31 @@
 				row.add(label);
 				row.add(label2);
 			
-				var i = Ti.UI.createImageView({
+				var left = Ti.UI.createImageView({
 					top: 5,
 					bottom: 5,
 					left:5,
-					width:'90',
-					height:'90',
+					width:'85',
+					height:'95',
 					borderRadius:10.0,
 					borderColor: '#420404',
-					borderWidth: 2,
+					borderWidth: 3.0,
 					canScale:false,
 					backgroundImage: result.fieldByName('image')
 				});
-				row.add(i);
-				if(count === 1) {
-					row.backgroundImage = 'topRow.png';	
-					count++;
-				} else if(count < nbrRows) {
-					row.backgroundImage = 'middleRow.png';
-					count++;
-				} else if(count === nbrRows) {
-					row.backgroundImage = 'bottomRow.png';
-					count++;
-				}
+				var right = Ti.UI.createImageView({
+					top: 5,
+					bottom: 5,
+					right:5,
+					width:'20',
+					height:'95',
+					canScale:false,
+					backgroundImage: 'indicator.png'
+				});
+				row.add(left);
+				row.add(right);
 				//row.leftImage = result.fieldByName('image');
-				row.rightImage = 'indicator.png';
+				//row.rightImage = 'indicator.png';
 				
 			list.push(row);
 			
@@ -204,7 +211,8 @@
 		var result = db.execute('SELECT * FROM products WHERE id = ?', [_id]);
 		while (result.isValidRow()) {
 			var view = Ti.UI.createImageView({
-				image: result.fieldByName('image')
+				image: result.fieldByName('image'),
+				backgroundImage: 'chip.jpg'
 			});
 			list.push(view);
 			result.next();

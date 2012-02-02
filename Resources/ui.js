@@ -22,7 +22,7 @@
 		}
 		
 		var webview = Ti.UI.createWebView({
-			url:'about.html',
+			url:'http://localhost/Titanium/about.html',
 			height:'auto',
 			width:'auto'
 		})
@@ -63,8 +63,9 @@
 		var scrollView = Titanium.UI.createScrollableView({
 			views: webshop.db.productDetails(_product.id),
 			showPagingControl:true,
+			cacheSize:3,
 			pagingControlHeight:10,
-			pagingControlColor:'black',
+			pagingControlColor:'#420404',
 			maxZoomScale:2.0,
 			currentPage:1,
 			top: 0,
@@ -78,12 +79,13 @@
 				   	contentWidth:'auto',
 					contentHeight:'auto',
 					top:200,
+					backgroundcolor: 'grey',
 					showVerticalScrollIndicator:true,
 					showHorizontalScrollIndicator:true
 		});
 		var bodyText = Ti.UI.createLabel({
 			text: 'blalldkflskflskdfldkflsdkfldksf,',
-			height: 300,
+			height: 'auto',
 			width: 'auto',
 			shadowColor: '#aaa',
 			shadowOffset: {x:1, y:1},
@@ -96,7 +98,7 @@
 		
 		var tb2 = Titanium.UI.iOS.createTabbedBar({
 			labels:['Info', 'Passend', 'Bewertungen', 'Covers'],
-			backgroundColor:'red',
+			backgroundColor:'#420404',
 			index:2
 		});
 		var flexSpace = Titanium.UI.createButton({
@@ -113,9 +115,11 @@
 		});
 		coverWin.addEventListener('open', function(e) {
 				coverWinOpen = true;
+				Ti.API.info(coverWinOpen)
 		});
 		coverWin.addEventListener('close', function(e) {
 				coverWinOpen = false;
+				Ti.API.info(coverWinOpen)
 		});
 		
 		tb2.addEventListener('click', function(e)
