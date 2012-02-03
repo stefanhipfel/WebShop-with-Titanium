@@ -125,6 +125,7 @@
 		});
 		coverWin.addEventListener('close', function(e) {
 				coverWinOpen = false;
+				Ti.API.info(coverWinOpen)
 				
 		});
 		

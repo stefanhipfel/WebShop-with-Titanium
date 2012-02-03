@@ -7,7 +7,7 @@
 	db.execute('CREATE TABLE IF NOT EXISTS mainCategories(id TEXT PRIMARY KEY, name TEXT)');
 	db.execute('CREATE TABLE IF NOT EXISTS subCategories(id TEXT PRIMARY KEY, main_id TEXT, name TEXT)');
 	db.execute('CREATE TABLE IF NOT EXISTS products(id TEXT PRIMARY KEY, sub_id TEXT, name TEXT, text TEXT, price TEXT, image TEXT)');
-	db.execute('CREATE TABLE IF NOT EXISTS images(id TEXT PRIMARY KEY, prod_id TEXT, url TEXT)');
+	db.execute('CREATE TABLE IF NOT EXISTS images(prod_id TEXT, url TEXT)');
 	db.close();
 	
 	var checkForData = function(_client) {
@@ -187,7 +187,7 @@
 					width:'20',
 					height:'95',
 					canScale:false,
-					backgroundImage: 'indicator.png'
+					backgroundImage: 'images/tableView/indicator.png'
 				});
 				row.add(left);
 				row.add(right);
@@ -268,7 +268,6 @@
 										webshop.db.addImages(data.items[main].items[subs].items[prods]._id, image[img].replace('{relTypeCode}', 563));
 										Ti.API.info(img)
 									}
-									
 									webshop.db.addProducts(data.items[main].items[subs].items[prods]._id, data.items[main].items[subs]._id, data.items[main].items[subs].items[prods].name, data.items[main].items[subs].items[prods].text, data.items[main].items[subs].items[prods].price, imgPath);	
 							}	
 					}
