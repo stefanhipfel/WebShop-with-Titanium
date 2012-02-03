@@ -209,25 +209,25 @@
 		var product = {};
 			product.images = [];
 		var db = Ti.Database.open('WebShop');
-		var result = db.execute('SELECT * FROM products WHERE id = ?', [_id]);
-		while (result.isValidRow()) {
+		var images = db.execute('SELECT * FROM images WHERE prod_id = ?', [_id]);
+		while (images.isValidRow()) {
 			var view = Ti.UI.createImageView({
-				image: result.fieldByName('image'),
-				backgroundImage: 'chip.jpg'
+				image: images.fieldByName('url')
 			});
-			product.text = result.fieldByName('text');
 			product.images.push(view);
-			result.next();
+			images.next();
 		}
+		var details = db.execute('SELECT * FROM products WHERE id = ?', [_id]);
+			product.text = details.fieldByName('text');
 		return product;
 	};
 	
 	webshop.db.productImages = function(_id){
 		var list = [];
 		var db = Ti.Database.open('WebShop');
-		var result = db.execute('SELECT * FROM products WHERE id = ?', [_id]);
+		var result = db.execute('SELECT * FROM images WHERE prod_id = ?', [_id]);
 		while (result.isValidRow()) {
-			list.push(result.fieldByName('image'));
+			list.push(result.fieldByName('url'));
 			result.next();
 		}
 		return list
@@ -246,8 +246,12 @@
 	webshop.db.addProducts = function(_id, _sub_id, _name, _text, _price, _image){
 		var db = Ti.Database.open('WebShop');
 		db.execute('INSERT INTO products(id, sub_id, name, text, price, image) VALUES(?,?,?,?,?,?)', _id, _sub_id, _name, _text, _price, _image);
-		
 	};
+	webshop.db.addImages = function(_prod_id, _url){
+		var db = Ti.Database.open('WebShop');
+		db.execute('INSERT INTO images(prod_id, url) VALUES(?,?)', _prod_id, _url);
+	};
+	
 	if (!checkForData(Ti.App.Properties.getString('client'))) {
 		webshop.net.getShopData(function(data) {
 			for (var main = 0; main < data.items.length; main++) {
@@ -258,12 +262,13 @@
 							
 							webshop.db.addSubCats(data.items[main].items[subs]._id, data.items[main]._id, data.items[main].items[subs].name);
 							for(var prods = 0; prods < data.items[main].items[subs].items.length; prods++) {
-									var image = data.items[main].items[subs].items[prods].images[0];
-									var imgPath = webshop.net.getImage(data.items[main].items[subs].items[prods]._id, image, 550);
-									/*for (var items = 0; items < images.length; items++) {
-										webshop.net.getImage(data.items[main].items[subs].items[prods]._id, images[items], 550);
+									var image = data.items[main].items[subs].items[prods].images;
+									var imgPath = webshop.net.getImage(data.items[main].items[subs].items[prods]._id, image[0], 550);
+									for (var img = 0; img < image.length; img++) {
+										webshop.db.addImages(data.items[main].items[subs].items[prods]._id, image[img].replace('{relTypeCode}', 563));
+										Ti.API.info(img)
 									}
-									*/
+									
 									webshop.db.addProducts(data.items[main].items[subs].items[prods]._id, data.items[main].items[subs]._id, data.items[main].items[subs].items[prods].name, data.items[main].items[subs].items[prods].text, data.items[main].items[subs].items[prods].price, imgPath);	
 							}	
 					}

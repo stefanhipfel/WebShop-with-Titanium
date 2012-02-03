@@ -1,6 +1,10 @@
 (function() {
 	webshop.ui = {};
 	webshop.ui.L = Titanium.Locale.getString;
+	var isAndroid = false;
+	if (Titanium.Platform.name == 'android') {
+		isAndroid = true;
+	}
 	
 	//Main window
 	webshop.ui.createAboutWindow = function() {
@@ -95,7 +99,7 @@
 		})
 		body.add(bodyText);
 		win.add(body);
-		
+		if(!isAndroid) {
 		var tb2 = Titanium.UI.iOS.createTabbedBar({
 			labels:['Info', 'Passend', 'Bewertungen', 'Covers'],
 			backgroundColor:'#420404',
@@ -111,6 +115,8 @@
 			url:'coverflow_view.js',
 			title:_product.name,
 			images: webshop.db.productImages(_product.id),
+			height: '50%',
+			width: '50%',
 			id: _product.id
 		});
 		coverWin.addEventListener('open', function(e) {
@@ -138,7 +144,77 @@
 				tab.close(coverWin,{animated:true});
 			}
 		});
-			
+		} else {
+			var bBar = Titanium.UI.createView({
+            height:50,
+            left:10,
+            layout:'horizontal'
+        });
+ 
+        var showSwitch = Titanium.UI.createSwitch({
+            style:Titanium.UI.Android.SWITCH_STYLE_TOGGLEBUTTON,
+            titleOff:"Shows",
+            titleOn:"Shows",
+            width:80,
+            value:true
+        });
+ 
+        var trySwitch = Titanium.UI.createSwitch({
+            style:Titanium.UI.Android.SWITCH_STYLE_TOGGLEBUTTON,
+            titleOff:"Try List",
+            titleOn:"Try List",
+            width:80,
+            value:false
+        }); 
+ 
+        var beenSwitch = Titanium.UI.createSwitch({
+            style:Titanium.UI.Android.SWITCH_STYLE_TOGGLEBUTTON,
+            titleOff:"Been List",
+            titleOn:"Been List",
+            width:80,
+            value:false
+        }); 
+ 
+        bBar.add(showSwitch);
+        bBar.add(trySwitch);
+        bBar.add(beenSwitch);
+ 
+        showSwitch.addEventListener('click',function(e){
+            if (showSwitch.value==true)
+            {
+                trySwitch.value = false;
+                beenSwitch.value = false;
+            }
+            else
+            {
+                showSwitch.value=true;
+            }
+        });
+ 
+        trySwitch.addEventListener('click',function(e){
+            if (trySwitch.value==true)
+            {
+                showSwitch.value = false;
+                beenSwitch.value = false;
+            }
+            else
+            {
+                trySwitch.value=true;
+            }
+        });
+ 
+        beenSwitch.addEventListener('click',function(e){
+            if (beenSwitch.value==true)
+            {
+                showSwitch.value = false;
+                trySwitch.value = false;
+            }
+            else
+            {
+                beenSwitch.value=true;
+            }
+        });
+		}	
 		return win;
 	};
 	
