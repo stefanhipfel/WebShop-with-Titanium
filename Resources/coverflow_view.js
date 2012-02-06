@@ -13,6 +13,11 @@ view.addEventListener('click',function(e)
 	Titanium.API.info("image clicked: "+e.index+', selected is '+view.selected);	
 });
 
+view.addEventListener('close',function(e)
+{
+	Titanium.API.info('CLOSED');	
+});
+
 // change listener when active image changes
 view.addEventListener('change',function(e)
 {
