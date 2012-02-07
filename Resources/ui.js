@@ -1,4 +1,5 @@
 (function() {
+	var annotations = require('map_view').annotations;
 	webshop.ui = {};
 	webshop.ui.L = Titanium.Locale.getString;
 	var isAndroid = false;
@@ -6,7 +7,9 @@
 		isAndroid = true;
 	}
 	
-	//Main window
+/*
+ * *************** ABOUT WINDOW 
+ */
 	webshop.ui.createAboutWindow = function() {
 		var win = Ti.UI.createWindow({
 			title:L('win_about'),
@@ -35,7 +38,9 @@
 		return win; 
 	};
 	
-	//Sub window
+/*
+ * *************** start SUB Product WINDOWS
+ */
 	webshop.ui.createSubCatWindow = function(/*Object*/ _product) {
 		var win = Ti.UI.createWindow({
 			title:_product.name,
@@ -56,17 +61,23 @@
 			
 		return win;
 	};
-	//Sub window
+	//HEAVYWEIGHT Sub window with its own execution context
 	webshop.ui.createProductDetailWindow = function(/*Object*/ _product) {
 		var win = Ti.UI.createWindow({
 			url:'ProductDetailView.js',
-			title: _product.name
+			title: _product.name,
+			data: webshop.db.productDetails(_product.id),
+			isAndroid: isAndroid,
+			images: webshop.db.productImages(_product.id),
+			id: _product.id
 		});
 			
 		return win;
 	};
-	
-	//Table Views
+
+/*
+ * *************** start TABLE VIEWS
+ */
 	webshop.ui.createMainCatTable = function(/*Boolean*/ _webApp) {
 		var tv = Ti.UI.createTableView({
 			style:Titanium.UI.iPhone.TableViewStyle.GROUPED,
@@ -124,7 +135,6 @@
 	};
 	
 		//Table Views
-	
 	webshop.ui.createProductTable = function(_cat) {
 		var search = Titanium.UI.createSearchBar({
 			showCancel:false
@@ -154,11 +164,17 @@
 		
 		return tv;
 	};
-	
+/*
+ * *************** end TABLE VIEWS
+ */
+
+/*
+ * *************** MAIN WINDOW
+ */	
 	webshop.ui.createShopWindow = function(/*Boolean*/ _tabName) {
 		var win = Titanium.UI.createWindow({
 			backgroundImage: 'chip.jpg',
-		  title: (_tabName),
+		 	title: (_tabName),
 			activity : {
 				onCreateOptionsMenu : function(e) {
 					var menu = e.menu;
@@ -173,8 +189,9 @@
 		});
 		
 		if(_tabName === L('tab_products')){
-		win.add(webshop.ui.createMainCatTable(_tabName));
+			win.add(webshop.ui.createMainCatTable(_tabName));
 		};
+		
 		if(_tabName === L('tab_home')){
 			var scrollView = Titanium.UI.createScrollableView({
 				views:  [Ti.UI.createImageView({
@@ -195,6 +212,19 @@
 	
 			win.add(scrollView);
 		};
+		if(_tabName === L('tab_store')){
+			Ti.API.info('TABSTORE')
+			var mapview = Titanium.Map.createView({
+				mapType: Titanium.Map.STANDARD_TYPE,
+				region:{latitude:33.74511, longitude:-84.38993, latitudeDelta:0.5, longitudeDelta:0.5},
+				animate:true,
+				regionFit:true,
+				userLocation:true,
+				annotations: annotations
+			});
+	
+			win.add(mapview);
+		};
 		
 		if (Ti.Platform.osname === 'iphone') {
 			var b = Titanium.UI.createButton({
@@ -210,7 +240,9 @@
 		return win;
 	};
 	
-	
+	/*
+	 * *************** start TABS
+	 */
 	webshop.ui.createApplicationTabGroup = function() {
 		var tabGroup = Titanium.UI.createTabGroup();
 		

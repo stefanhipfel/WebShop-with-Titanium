@@ -1,4 +1,4 @@
-var win = Titanium.UI.currentWindow;
+var annotations = [];
 
 var isAndroid = false;
 if (Titanium.Platform.name == 'android') {
@@ -70,7 +70,7 @@ if (!isAndroid) {
 	mapview.addAnnotation(atlanta);
 }
 mapview.selectAnnotation(atlanta);
-win.add(mapview);
+//win.add(mapview);
 
 //
 // NAVBAR BUTTONS
@@ -137,7 +137,7 @@ if (!isAndroid) {
 		style:Titanium.UI.iPhone.SystemButtonStyle.BORDERED,
 		title:'Remove All'
 	});
-	win.rightNavButton = removeAll;
+	//win.rightNavButton = removeAll;
 
 	//
 	// TOOLBAR BUTTONS
@@ -194,7 +194,7 @@ if (!isAndroid) {
 	
 	wireClickHandlers();
 	
-	win.setToolbar([flexSpace,std,flexSpace,hyb,flexSpace,sat,flexSpace,atl,flexSpace,sv,flexSpace,zoomin,flexSpace,zoomout,flexSpace]);
+	//win.setToolbar([flexSpace,std,flexSpace,hyb,flexSpace,sat,flexSpace,atl,flexSpace,sv,flexSpace,zoomin,flexSpace,zoomout,flexSpace]);
 } else {
 	var activity = Ti.Android.currentActivity;
 	activity.onCreateOptionsMenu = function(e) {
@@ -284,3 +284,7 @@ apple.addEventListener('click', function(evt)
 
 
 });
+annotations.push(atlanta);
+annotations.push(apple);
+
+exports.annotations = annotations;
