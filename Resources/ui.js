@@ -136,6 +136,7 @@
 	
 		//Table Views
 	webshop.ui.createProductTable = function(_cat) {
+		var rowStart = 6;
 		var search = Titanium.UI.createSearchBar({
 			showCancel:false
 		});
@@ -158,7 +159,25 @@
 			
 			tv.setData(results);
 		}
-		Ti.App.addEventListener('databaseUpdated', populateData);
+		tv.addEventListener('scrollEnd',function(e)
+		{	
+			var offset = e.contentOffset.y;
+   			var height = e.size.height;
+    	    var total = offset + height;
+		    var theEnd = e.contentSize.height;
+		    var distance = theEnd - total;
+			
+			Ti.API.info(offset);
+			Ti.API.info(total);
+			Ti.API.info(theEnd);
+			if(total > e.contentSize.height*1.01) {
+			Ti.API.info('NEW ROW')
+			var results = webshop.db.lazyLoadProducts(_cat, rowStart);
+			tv.appendRow(results);
+			rowStart += 3;
+			Ti.API.info(rowStart)
+			}
+		});
 		
 		populateData();
 		

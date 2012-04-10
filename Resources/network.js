@@ -7,7 +7,7 @@
 			var data = JSON.parse(this.responseText);
 			_data(data);
 		};
-		xhr.open("GET", "http://10.0.2.2:8000/elegance/cache/getCompleteList");
+		xhr.open("GET", "http://127.0.0.1:8000/elegance/cache/getCompleteList");
 		xhr.send();
 	};
 	//--> falsche Methodennamen werfen KEINEN FEHLER!!!!!!!!!!!!!!!!!!!!!!!! file.exits!!!
@@ -18,12 +18,17 @@
 		var url = _url.replace('{relTypeCode}', _size);
 		
 		if(!file.exists()) {
-			
+			Ti.API.info('-------------------image_network')
 			var xhr = Ti.Network.createHTTPClient();
+			xhr.setTimeout(10000);
 			xhr.onload = function() {
 				if(xhr.status == 200) {
 					file.write(xhr.responseData);
 				}
+				xhr.onerror = function()
+						{
+							alert("Your internet connection is slow or unstable. Please try again later.");
+						};
 			};
 			xhr.open("GET", url);
 			xhr.send();
